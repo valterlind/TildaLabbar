@@ -1,26 +1,17 @@
 from array import array
 
-
 class ArrayQ:
-    def __init__(self, data=[]):
+    def __init__(self, data = []):
         self.__data = array('I', data)
 
     def isEmpty(self):
-       '''Kollar om kön är tom'''
-        return len(self.__data) == 0
-
-    def enqueue(self, add):
-        '''lägger till element sist i kön'''
-        self.__data.append(add)
-
+        return len(self.data) == 0
+   
+    def enqueue(self, obj):
+        self.__data.append(obj)
+    
     def dequeue(self):
-        '''plockar ut och returnerar det första elementet i kön'''
         return self.__data.pop(0)
-
-
-
-
-
 
 
 def arrayQ_testing():
@@ -35,3 +26,5 @@ def arrayQ_testing():
         print('OK')
     else:
         print("FAILED")
+
+arrayQ_testing()
