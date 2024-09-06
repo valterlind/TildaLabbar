@@ -27,4 +27,6 @@ def arrayQ_testing():
     else:
         print("FAILED")
 
-arrayQ_testing()
+
+if __name__ == "__main__":
+    arrayQ_testing()
