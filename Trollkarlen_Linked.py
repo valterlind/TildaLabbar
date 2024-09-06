@@ -6,7 +6,7 @@ def main():
     tmp = (kort.split(sep=' '))
     lista = [int(obj) for obj in tmp]
 
-    q = ArrayQ(lista)
+    q = LinkedQ(lista)
     mystring = []
 
     while q.isEmpty() == False:
