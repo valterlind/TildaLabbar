@@ -1,13 +1,16 @@
 from linkedQFile import LinkedQ
+import sys
+
 
 def main():
-    kort = (input('Kort: '))
-    lista = (kort.split(sep=' '))
+    #indata = (input('Kort: '))
+    indata = sys.stdin.readline()
+    lista = (indata.split(sep=' '))
 
     q = LinkedQ()
 
     for obj in lista:
-        q.enqueue(int(obj))
+        q.enqueue(obj)
 
     mystring = []
 
