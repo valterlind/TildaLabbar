@@ -2,10 +2,13 @@ from ArrayQFile import ArrayQ
 
 def main():
     kort = (input('Kort: '))
-    tmp = (kort.split(sep=' '))
-    lista = [int(obj) for obj in tmp]
+    lista = (kort.split(sep=' '))
 
-    q = ArrayQ(lista)
+    q = ArrayQ()
+
+    for obj in lista:
+        q.enqueue(int(obj))
+
     mystring = []
 
     while q.isEmpty() == False:
