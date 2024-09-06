@@ -5,15 +5,13 @@ def main():
     tmp = (kort.split(sep=' '))
     lista = [int(obj) for obj in tmp]
 
-    print(lista)
-
-    q = ArrayQ(tmp)
+    q = ArrayQ(lista)
     mystring = []
 
     while q.isEmpty() == False:
         q.enqueue(q.dequeue())
         mystring.append(q.dequeue()) 
     
-    print(mystring)
+    print(*mystring, sep=' ')
 
 main()
