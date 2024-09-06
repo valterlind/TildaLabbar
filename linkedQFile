@@ -7,8 +7,8 @@ class Node:
 
 class LinkedQ:
     def __init__(self):
-        self.__first = None  #håller reda på första noden i kön'''
-        self.__last = None  #pekar ut sista  noden i kön'''
+        self.__first = None  #håller reda på första noden i kön
+        self.__last = None  #pekar ut sjsta  noden i kön
 
     def enqueue(self, add):
         '''lägger till element sist i kön'''
@@ -32,6 +32,7 @@ class LinkedQ:
     def isEmpty(self):
         '''Returnerar true om kön är tom'''
         return self.__first == None
+
 
 
 
