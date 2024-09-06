@@ -8,7 +8,7 @@ def main():
 
     print(lista)
 
-    q = ArrayQ(tmp)
+    q = LinkedQ(tmp)
     mystring = []
 
     while q.isEmpty() == False:
