@@ -20,3 +20,13 @@ class Bintree:
         # Skriver ut trädet i inorder
         skriv(self.root)
         print("\n")
+
+
+ def putta(p, newvalue):
+     # Funktion som gör själva jobbet att stoppa in en ny nod
+
+ def finns(p,value):
+     # Funktion som gör själva jobbet att söka efter ett värde
+
+ def skriv(p):
+     # Funktion som gör själva jobbet att skriva ut trädet
