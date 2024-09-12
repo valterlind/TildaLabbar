@@ -30,3 +30,34 @@ class Bintree:
 
  def skriv(p):
      # Funktion som gör själva jobbet att skriva ut trädet
+
+#Benjamin och hugos 
+def putta(current, newvalue):
+    '''Adds new value to the tree'''
+    if current is None:
+        current = Node(newvalue)
+    if newvalue < current.value:
+        current.left = putta(current.left, newvalue)
+    elif newvalue > current.value:
+        current.right = putta(current.right, newvalue)
+    return current
+
+
+def finns(current, value):
+    if current is None:
+        return False
+    elif value == current.value:
+        return True
+    elif value < current.value:
+        return finns(current.left, value)
+    elif value > current.value:
+        return finns(current.right, value)
+    
+
+
+def skriv(current):
+    '''Prints out the tree inorder'''
+    if current is not None:
+        skriv(current.left)
+        print(current.value, end=" ")
+        skriv(current.right)
