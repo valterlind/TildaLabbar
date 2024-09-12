@@ -61,3 +61,18 @@ def skriv(current):
         skriv(current.left)
         print(current.value, end=" ")
         skriv(current.right)
+
+def test():
+    tree = Bintree()
+    tree.put(32)
+    tree.put(12)
+    tree.put(45)
+    tree.write()
+    print(5 in tree)
+    print(12 in tree)
+    tree.put(45)
+    tree.write()
+
+
+if __name__ == "__main__":
+    test()
