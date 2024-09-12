@@ -12,12 +12,12 @@ def svenska():
     print("\n")
     return svenska
 
-def remove_chars(str_in):
-    '''Tar bort tecken från given sträng'''
-    kar_att_ta_bort = ",\"'.!"
-    översättningstabell = str.maketrans("", "", kar_att_ta_bort)
-    str_ut = str_in.translate(översättningstabell)
-    return str_ut
+def character_removal(str_in):
+    '''Rensar ingående sträng från oönskade tecken'''
+    unwanted_characters = ",\"'.!"
+    table = str.maketrans("", "", unwanted_characters)
+    str_out = str_in.translate(table)
+    return str_out
 
 
 def engelska(svenska):
