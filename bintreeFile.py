@@ -51,17 +51,20 @@ def skriv(p):
         print(p.value, end=" ")
         skriv(p.right)
 
-def test():
+def test_tree():
+    """testar bintreeklassen"""
     tree = Bintree()
-    tree.put(32)
-    tree.put(12)
-    tree.put(45)
+    values_to_add = [37, 19, 58]
+    for value in values_to_add:
+        tree.put(value)
     tree.write()
-    print(5 in tree)
-    print(12 in tree)
-    tree.put(45)
+    search_values = [5, 63]
+    for value in search_values:
+        print(f"{value} in tree: {value in tree}")
+    duplicate_value = 45
+    tree.put(duplicate_value)
     tree.write()
 
 
 if __name__ == "__main__":
-    test()
+    test_tree()
