@@ -28,7 +28,7 @@ def engelska(svenska):
         for rad in eng_fil:
             rad_lst = rad.strip().split()
             for ord in rad_lst:
-                ordet = remove_chars(ord)
+                ordet = character_removal(ord)
                 if ordet in engelska:
                     pass
                 else:
