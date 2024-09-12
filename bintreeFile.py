@@ -22,45 +22,34 @@ class Bintree:
         print("\n")
 
 
- def putta(p, newvalue):
-     # Funktion som gör själva jobbet att stoppa in en ny nod
-
- def finns(p,value):
-     # Funktion som gör själva jobbet att söka efter ett värde
-
- def skriv(p):
-     # Funktion som gör själva jobbet att skriva ut trädet
-
-#Benjamin och hugos 
-def putta(current, newvalue):
-    '''Adds new value to the tree'''
-    if current is None:
-        current = Node(newvalue)
-    if newvalue < current.value:
-        current.left = putta(current.left, newvalue)
-    elif newvalue > current.value:
-        current.right = putta(current.right, newvalue)
-    return current
+def putta(p, newvalue):
+    '''Lägger till ett nytt värde i trädet'''
+    if p is None:
+        return Node(newvalue)
+    if newvalue < p.value:
+        p.left = putta(p.left, newvalue)
+    elif newvalue > p.value:
+        p.right = putta(p.right, newvalue)
+    return p
 
 
-def finns(current, value):
-    if current is None:
-        return False
-    elif value == current.value:
-        return True
-    elif value < current.value:
-        return finns(current.left, value)
-    elif value > current.value:
-        return finns(current.right, value)
-    
+def finns(p, value):
+    while p is not None:
+        if value == p.value:
+            return True
+        elif value < p.value:
+            p = p.left
+        else:
+            p = p.right
+    return False
 
 
-def skriv(current):
-    '''Prints out the tree inorder'''
-    if current is not None:
-        skriv(current.left)
-        print(current.value, end=" ")
-        skriv(current.right)
+def skriv(p):
+    '''Skriver ut trädet i inorder'''
+    if p is not None:
+        skriv(p.left)
+        print(p.value, end=" ")
+        skriv(p.right)
 
 def test():
     tree = Bintree()
