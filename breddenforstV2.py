@@ -1,48 +1,58 @@
 from linkedQFile import LinkedQ
 from bintreeFile import Bintree
 
-ordlistan = Bintree()
-gamla = Bintree()
-q = LinkedQ()
 
-def inmatning():
-    startord = input("Startord: ")
-    slutord = input("Slutord: ")
-    return startord, slutord
+def create_tree(filename):
+    '''Skapar ett binärträd av ordfilen'''
+    global svenska
+    svenska = Bintree()
+    with open(filename, "r", encoding="utf-8") as file:
+        for row in file:
+            word = row.strip()  # Tar bort eventuella radbrytningar
+            if word not in svenska:  # Kontrollerar om ordet redan finns i trädet
+                svenska.put(word)  # Lägger till ordet i trädet
 
-def läs_fil():
-    with open("word3.txt", "r", encoding="utf-8") as ordfil:
-        for rad in ordfil:
-            ordet = rad.strip()
-            if ordet not in ordlistan:
-                ordlistan.put(ordet)
-            else:
-                gamla.put(ordet)
+    return svenska
 
-def makechildren(nod, q):
-    for i in range(len(nod)):
-        for bokstav in "abcdefghijklmnopqrstuvxyzåäö":
-            barn = nod[:i] + bokstav + nod[i + 1:]
-            if barn in ordlistan:
-                if barn not in gamla and barn != nod:
-                    gamla.put(barn)
-                    q.enqueue(barn)
+
+def makechildren(startord, q):
+    letters = "abcdefghijklmnopqrstuvwxyzåäö"
+    startord = str(startord)
+    
+    for i in range(0, len(startord)):
+        for letter in letters:
+            if letter != startord[i]:
+                child = startord[:i] + letter + startord[i + 1:]
+                if child == target:  # väg till slutord funnet
+                    print(f"Det finns en väg till {target}")
+                    quit()
+                if child in svenska and child not in gamla:
+                    q.enqueue(child)
+                    gamla.put(child)
+
 
 def main():
-    startord, slutord = inmatning()
-    läs_fil()
-    gate = False
-    q.enqueue(startord)
-    makechildren(startord, q)
-    while not q.isEmpty():
-        nod = q.dequeue()
-        makechildren(nod, q)
-        if nod == slutord:
-            gate = True
-    if gate == True:
-        print("Det finns en väg till", slutord)
+    q = LinkedQ()
+
+    gamla = Bintree()
+
+    create_tree("word3.txt")
+
+    startord = input("Startord: ")
+    if startord in svenska:
+        q.enqueue(startord)
+        gamla.put(startord)
     else:
-        print("Det finns inte någon väg till", slutord)
+        print("Ej giltigt ord")
+        quit()
+    global target
+    target = input("Slutord: ")
+
+    while not q.isEmpty():
+        node = q.dequeue()
+        makechildren(node, q)
+    print(f"Det finns ingen väg till {target}")
+
 
 if __name__ == "__main__":
     main()
