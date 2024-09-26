@@ -9,7 +9,6 @@ q = LinkedQ()
 
 class ParentNode:
     '''Klass för att hålla ord och dess föräldranoder'''
-
     def __init__(self, word, parent=None):
         self.word = word
         self.parent = parent
