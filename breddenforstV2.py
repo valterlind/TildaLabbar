@@ -36,6 +36,7 @@ def main():
 
     gamla = Bintree()
 
+
     create_tree("word3.txt")
 
     startord = input("Startord: ")
