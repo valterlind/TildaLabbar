@@ -15,13 +15,12 @@ class ParentNode:
 
     def write_chain(self):
         '''Skriver ut ordkedjan från startord till slutord'''
-        if self.parent:
+        if self.parent is not None:
             self.parent.write_chain()
         print(self.word)
 
 
 class SolutionFound(Exception):
-    '''Undantag för när en lösning hittats'''
     pass
 
 
@@ -34,8 +33,6 @@ def read_input():
 
 def create_tree(filename):
     '''Skapar ett binärträd av ordfilen'''
-    global svenska
-    svenska = Bintree()
     with open(filename, "r", encoding="utf-8") as file:
         for row in file:
             word = row.strip()
@@ -73,6 +70,7 @@ def main():
         pass
     else:
         print("Det finns ingen väg från", startord.word, "till", slutord)
+
 
 
 if __name__ == "__main__":
