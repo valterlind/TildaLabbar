@@ -15,7 +15,7 @@ def create_tree(filename):
     return svenska
 
 
-def makechildren(startord, q):
+def makechildren(startord, q, gamla):
     letters = "abcdefghijklmnopqrstuvwxyzåäö"
     startord = str(startord)
     
@@ -50,7 +50,7 @@ def main():
 
     while not q.isEmpty():
         node = q.dequeue()
-        makechildren(node, q)
+        makechildren(node, q, gamla)
     print(f"Det finns ingen väg till {target}")
 
 
