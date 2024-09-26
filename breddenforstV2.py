@@ -15,15 +15,15 @@ def create_tree(filename):
     return svenska
 
 
-def makechildren(startord, q, gamla):
+def makechildren(startord, q, gamla, target):
     letters = "abcdefghijklmnopqrstuvwxyzåäö"
     startord = str(startord)
-    
+
     for i in range(0, len(startord)):
         for letter in letters:
             if letter != startord[i]:
                 child = startord[:i] + letter + startord[i + 1:]
-                if child == target:  # väg till slutord funnet
+                if child == target:  # väg till slutord funnen
                     print(f"Det finns en väg till {target}")
                     quit()
                 if child in svenska and child not in gamla:
@@ -45,12 +45,14 @@ def main():
     else:
         print("Ej giltigt ord")
         quit()
-    global target
     target = input("Slutord: ")
+    if target not in svenska:
+        print("Slutordet finns inte i ordlistan")
+        quit()
 
     while not q.isEmpty():
         node = q.dequeue()
-        makechildren(node, q, gamla)
+        makechildren(node, q, gamla, target)
     print(f"Det finns ingen väg till {target}")
 
 
