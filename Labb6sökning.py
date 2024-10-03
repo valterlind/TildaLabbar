@@ -37,9 +37,9 @@ def search_in_dict(song_dict, target):
 def main():
     # Läs in låtar från fil
     songs = läs_in_låtar("unique_tracks.txt")
+    target = input(""" vilken låt ska vi söka efter?""")
 
     # Testa linjär sökning
-    target = "2 Da Beat Ch'yall"  # Ange en låttitel som ska sökas (uppdatera med en giltig titel)
     start_time = time.time()
     linear_result = linear_search(songs, target)
     linear_time = time.time() - start_time
