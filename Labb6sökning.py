@@ -18,18 +18,23 @@ def linear_search(songs, target):
             return index
     return -1
 
+
 def binary_search(songs, target):
+    # Listan måste vara sorterad för binärsökning
     left, right = 0, len(songs) - 1
+
     while left <= right:
         mid = (left + right) // 2
         mid_val = songs[mid].låttitel
+
         if mid_val == target:
-            return mid
+            return mid  # Returnera index om låttiteln hittades
         elif mid_val < target:
-            left = mid + 1
+            left = mid + 1  # Flytta till höger om mittenvärdet är mindre än målet
         else:
-            right = mid - 1
-    return -1
+            right = mid - 1  # Flytta till vänster om mittenvärdet är större än målet
+
+    return -1  # Om låttiteln inte hittades
 
 def search_in_dict(song_dict, target):
     return song_dict.get(target, None)
@@ -37,7 +42,7 @@ def search_in_dict(song_dict, target):
 def main():
     # Läs in låtar från fil
     songs = läs_in_låtar("unique_tracks.txt")
-    target = input(""" vilken låt ska vi söka efter?""")
+    target = input("""vilken låt ska vi söka efter?  """)
 
     # Testa linjär sökning
     start_time = time.time()
@@ -46,7 +51,7 @@ def main():
     print(f"Linjär sökning: Index: {linear_result}, Tid: {linear_time:.6f} sekunder")
 
     # Testa binär sökning
-    songs_sorted = sorted(songs)  # Sortera låtarna
+    songs_sorted = sorted(songs, key=lambda x: x.låttitel)
     start_time = time.time()
     binary_result = binary_search(songs_sorted, target)
     binary_time = time.time() - start_time
