@@ -12,7 +12,7 @@ def läs_in_låtar(filnamn):
     return låtlista
 
 def main():
-    filnamn = "unique_tracks.txt"  # Ersätt med din fil
+    filnamn = "unique_tracks.txt" 
     låtlista = läs_in_låtar(filnamn)
 
     # Testa inläsningen genom att skriva ut första 10 låtarna
