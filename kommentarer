@@ -1,0 +1,11 @@
+# Kommentar om prestandaanalys:
+# 
+# 1. Linjär sökning (O(n)) visade sig ta linjär tid, vilket är i linje med teorin. När listans storlek ökade, ökade söktiden proportionellt.
+# 
+# 2. Binär sökning (O(log n)) presterade betydligt snabbare än linjär sökning, speciellt för större listor. Dock måste sorteringstiden inkluderas när vi sorterar listan först, vilket påverkar totalprestationen.
+# 
+# 3. Sorteringsalgoritmer:
+#    - Bubblesort (O(n²)) visade sig vara mycket ineffektiv för stora listor. Den klarade av små listor, men för större listor blev den snabbt oacceptabel.
+#    - Quicksort (O(n log n)) presterade i linje med teorin och var mycket snabbare än Bubblesort, särskilt när storleken på listan ökade.
+# 
+# Slutsats: För små dataset kan både linjär sökning och enkla sorteringsmetoder som Bubblesort fungera acceptabelt. För större dataset blir dock binär sökning i kombination med en effektiv sorteringsalgoritm som Quicksort överlägset snabbare.
