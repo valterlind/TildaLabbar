@@ -35,11 +35,11 @@ class Drama:
 
 
 def read_dramas_from_file(file_path):
-    dramas_hash = DictHash()  # Skapa en DictHash-instans
+    dramas_hash = DictHash()  
     with open(file_path, 'r', encoding='utf-8') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            # Skapa ett Drama-objekt
+            
             drama = Drama(
                 row['Drama Name'],
                 row['Rating(Out of 10)'],
@@ -55,7 +55,7 @@ def read_dramas_from_file(file_path):
             # Lagra dramaobjektet i hashtabellen, använd 'Drama Name' som nyckel
             dramas_hash.store(row['Drama Name'], drama)
 
-    return dramas_hash  # Returnera DictHash-objektet
+    return dramas_hash 
 
 
 def search_drama(dramas_hash):
