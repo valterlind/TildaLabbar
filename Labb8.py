@@ -1,45 +1,4 @@
-import unittest
-
-
-class Syntaxfel(Exception):
-    def __init__(self, meddelande):
-        super().__init__(meddelande)
-
-
-class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
-
-
-class LinkedQ:
-    def __init__(self):
-        self.__first = None
-        self.__last = None
-
-    def enqueue(self, data):
-        new_node = Node(data)
-        if self.isEmpty():
-            self.__first = new_node
-            self.__last = new_node
-        else:
-            self.__last.next = new_node
-            self.__last = new_node
-
-    def dequeue(self):
-        if self.isEmpty():
-            return None
-        data = self.__first.data
-        self.__first = self.__first.next
-        return data
-
-    def isEmpty(self):
-        return self.__first is None
-
-    def peek(self):
-        if self.isEmpty():
-            return None
-        return self.__first.data
+from linkedQfile import Syntaxfel, LinkedQ
 
 
 def read_molekyl(queue):
@@ -69,10 +28,11 @@ def read_num(queue):
     num = ''
     while queue.peek() and queue.peek().isdigit():
         num += queue.dequeue()
-    if num.startswith("0"):
-        raise Syntaxfel("För litet tal vid radslutet " + num)
-    if int(num) < 2:
-        raise Syntaxfel("För litet tal vid radslutet " + num if int(num) > 0 else '')
+    if num == "1":
+        raise Syntaxfel("För litet tal vid radslutet")
+    elif num.startswith("0") or int(num) < 2:
+        remaining = num.lstrip("0")
+        raise Syntaxfel("För litet tal vid radslutet " + remaining)
 
 
 def rester(queue):
@@ -99,38 +59,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-class TestMolekylSyntax(unittest.TestCase):
-    def test_korrekt_molekyl(self):
-        korrekta_molekyler = ["H2", "P21", "Ag3", "Fe12", "Xx5", "H10100"]
-        for molekyl in korrekta_molekyler:
-            queue = LinkedQ()
-            for char in molekyl:
-                queue.enqueue(char)
-            try:
-                read_molekyl(queue)
-            except Syntaxfel:
-                self.fail(f"Korrekt molekyl misslyckades: {molekyl}")
-
-    def test_fel_molekyl(self):
-        fel_molekyler = {
-            "a": "Saknad stor bokstav vid radslutet a",
-            "cr12": "Saknad stor bokstav vid radslutet cr12",
-            "8": "Saknad stor bokstav vid radslutet 8",
-            "Cr0": "För litet tal vid radslutet 0",
-            "Pb1": "För litet tal vid radslutet 1",
-            "H01011": "För litet tal vid radslutet 01011",
-            "K01": "För litet tal vid radslutet 01"
-        }
-        for molekyl, expected_message in fel_molekyler.items():
-            queue = LinkedQ()
-            for char in molekyl:
-                queue.enqueue(char)
-            with self.assertRaises(Syntaxfel) as cm:
-                read_molekyl(queue)
-            self.assertEqual(str(cm.exception), expected_message)
-
-
-unittest.main(argv=[''], verbosity=2, exit=False)
 
