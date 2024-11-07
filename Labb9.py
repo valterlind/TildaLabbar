@@ -17,62 +17,63 @@ class MoleculeParser:
         for char in formula:
             self.queue.enqueue(char)
 
-    def parse(self):
+    def readformula(self):
         try:
-            self.formula_rule()
+            # Kontrollera om formeln börjar med ")" eller en siffra
+            first_char = self.current_char()
+            if first_char == ")":
+                raise Syntaxfel(f"Felaktig gruppstart vid radslutet {self.remaining_formula()}")
+            if first_char.isdigit():
+                raise Syntaxfel(f"Felaktig gruppstart vid radslutet {self.remaining_formula()}")
+            
+            # Starta analysen med readmol()
+            self.readmol()
+            
+            # Om kön inte är tom efter analysen, så finns ett syntaxfel
             if not self.queue.isEmpty():
                 raise Syntaxfel(f"Felaktig gruppstart vid radslutet {self.remaining_formula()}")
+            
             print("Formeln är syntaktiskt korrekt")
+        
         except Syntaxfel as e:
             print(e)
 
-    def formula_rule(self):
-        """<formel> ::= <mol> \n"""
-        # Kontrollera om den första bokstaven är en stor bokstav
-        first_char = self.current_char()
-        if not first_char == "(" or not first_char.isalpha():
-            raise Syntaxfel(f"Felaktig gruppstart vid radslutet {self.remaining_formula()}")
-        if not first_char.isupper():
-            raise Syntaxfel(f"Saknad stor bokstav vid radslutet {self.remaining_formula()}")
-
-        self.mol_rule()
-
-    def mol_rule(self):
+    def readmol(self):
         """<mol> ::= <group> | <group><mol>"""
-        self.group_rule()
+        self.readgroup()
         while not self.queue.isEmpty() and self.queue.peek() != ')':
-            self.group_rule()
+            self.readgroup()
 
-    def group_rule(self):
+    def readgroup(self):
         """<group> ::= <atom> | <atom><num> | (<mol>) <num>"""
         if self.current_char() == '(':
             self.queue.dequeue()
-            self.mol_rule()
+            self.readmol()
             if self.current_char() != ')':
                 raise Syntaxfel(f"Saknad högerparentes vid radslutet {self.remaining_formula()}")
             self.queue.dequeue()
-            self.num_rule()
+            self.readnum()
         else:
-            self.atom_rule()
+            self.readatom()
             if self.current_char() and self.current_char().isdigit():
-                self.num_rule()
+                self.readnum()
 
-    def atom_rule(self):
+    def readatom(self):
         """<atom> ::= <LETTER> | <LETTER><letter>"""
-        letter = self.letter_rule()
+        letter = self.readletter()
         atom = letter
         if self.current_char() and self.current_char().islower():
             atom += self.queue.dequeue()
         if atom not in valid_atoms:
             raise Syntaxfel(f"Okänd atom vid radslutet {self.remaining_formula()}")
 
-    def letter_rule(self):
+    def readletter(self):
         """<LETTER>::= A | B | C | ... | Z"""
         if self.current_char() and self.current_char().isupper():
             return self.queue.dequeue()
         raise Syntaxfel(f"Saknad stor bokstav vid radslutet {self.remaining_formula()}")
 
-    def num_rule(self):
+    def readnum(self):
         """<num> ::= 2 | 3 | 4 | ..."""
         num = ''
         # Spara siffror i num
@@ -115,6 +116,17 @@ class MoleculeParser:
         self.queue = temp_queue
         return ''.join(remaining)
 
+  
+    def parse_to_output(self):
+        """Parsar och returnerar en sträng som visar resultatet, utan att skriva ut."""
+        try:
+            self.readformula()
+            if not self.queue.isEmpty():
+                raise Syntaxfel(f"Felaktig gruppstart vid radslutet {self.remaining_formula()}")
+            return "Formeln är syntaktiskt korrekt"
+        except Syntaxfel as e:
+            return str(e)
+
 
 def main():
     for line in sys.stdin:
@@ -122,8 +134,14 @@ def main():
         if line == '#':
             break
         parser = MoleculeParser(line)
-        parser.parse()
+        parser.readformula()
 
 
 if __name__ == "__main__":
     main()
+
+def testOutput(formula):
+    """Används för att testa utmatning från MoleculeParser."""
+    parser = MoleculeParser(formula)
+    return parser.parse_to_output()
+
