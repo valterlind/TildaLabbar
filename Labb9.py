@@ -1,7 +1,7 @@
 import sys
-from linkedQfile import LinkedQ, Syntaxfel  # Importera LinkedQ och Syntaxfel från linkedQfile
+from linkedQfile import LinkedQ, Syntaxfel
 
-# Lista över giltiga atomer
+
 valid_atoms = {"H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar",
                "K", "Ca", "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br",
                "Kr", "Rb", "Sr", "Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb", "Te",
@@ -14,44 +14,40 @@ valid_atoms = {"H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg",
 class MoleculeParser:
     def __init__(self, formula):
         self.queue = LinkedQ()
+        self.position = 0  # Track the position in the formula
         for char in formula:
             self.queue.enqueue(char)
 
     def readformula(self):
         try:
-            # Kontrollera om formeln börjar med ")" eller en siffra
             first_char = self.current_char()
-            if first_char == ")":
+            if first_char == ")" or first_char.isdigit():
                 raise Syntaxfel(f"Felaktig gruppstart vid radslutet {self.remaining_formula()}")
-            if first_char.isdigit():
-                raise Syntaxfel(f"Felaktig gruppstart vid radslutet {self.remaining_formula()}")
-            
-            # Starta analysen med readmol()
+
             self.readmol()
-            
-            # Om kön inte är tom efter analysen, så finns ett syntaxfel
+
             if not self.queue.isEmpty():
                 raise Syntaxfel(f"Felaktig gruppstart vid radslutet {self.remaining_formula()}")
-            
-            print("Formeln är syntaktiskt korrekt")
-        
+
+            return "Formeln är syntaktiskt korrekt"
+
         except Syntaxfel as e:
-            print(e)
+            return str(e)
 
     def readmol(self):
-        """<mol> ::= <group> | <group><mol>"""
         self.readgroup()
         while not self.queue.isEmpty() and self.queue.peek() != ')':
             self.readgroup()
 
     def readgroup(self):
-        """<group> ::= <atom> | <atom><num> | (<mol>) <num>"""
         if self.current_char() == '(':
             self.queue.dequeue()
+            self.position += 1
             self.readmol()
             if self.current_char() != ')':
                 raise Syntaxfel(f"Saknad högerparentes vid radslutet {self.remaining_formula()}")
             self.queue.dequeue()
+            self.position += 1
             self.readnum()
         else:
             self.readatom()
@@ -59,89 +55,70 @@ class MoleculeParser:
                 self.readnum()
 
     def readatom(self):
-        """<atom> ::= <LETTER> | <LETTER><letter>"""
         letter = self.readletter()
         atom = letter
         if self.current_char() and self.current_char().islower():
             atom += self.queue.dequeue()
+            self.position += 1
         if atom not in valid_atoms:
             raise Syntaxfel(f"Okänd atom vid radslutet {self.remaining_formula()}")
 
     def readletter(self):
-        """<LETTER>::= A | B | C | ... | Z"""
         if self.current_char() and self.current_char().isupper():
+            self.position += 1
             return self.queue.dequeue()
         raise Syntaxfel(f"Saknad stor bokstav vid radslutet {self.remaining_formula()}")
 
     def readnum(self):
-        """<num> ::= 2 | 3 | 4 | ..."""
         num = ''
-        # Spara siffror i num
         while self.current_char() and self.current_char().isdigit():
-            num += self.current_char()  # Samla siffror
-            self.queue.dequeue()  # Fortsätt i kön
+            num += self.current_char()
+            self.queue.dequeue()
+            self.position += 1
 
-        # Kontrollera om num är tomt
         if num == "":
             raise Syntaxfel("Saknad siffra vid radslutet " + self.remaining_formula())
 
-        # Om talet börjar med "0" men inte är exakt "0", så ge fel
-        if num.startswith("0") and num != "0":
-            raise Syntaxfel("För litet tal vid radslutet " + num.lstrip("0") + self.remaining_formula())
-        elif num.startswith("1") and int(num) < 2:
-            raise Syntaxfel("För litet tal vid radslutet " + num.lstrip("1") + self.remaining_formula())
-
-        if int(num) == 0:
-            raise Syntaxfel("För litet tal vid radslutet" + self.remaining_formula())
-
-        # Om num är mindre än 2, ge fel och inkludera num och den återstående formeln
-        if int(num) < 2:
+        if num == "0" or num == "1":
+            raise Syntaxfel("För litet tal vid radslutet " + self.remaining_formula())
+        elif num.startswith("0"):
+            remaining_part = num.lstrip("0") + self.remaining_formula()
+            raise Syntaxfel("För litet tal vid radslutet " + remaining_part)
+        elif int(num) < 2:
             raise Syntaxfel("För litet tal vid radslutet " + num + self.remaining_formula())
 
     def current_char(self):
-        """Returns the current character or None if queue is empty."""
         return self.queue.peek()
 
     def remaining_formula(self):
-        """Returns the remaining formula in the queue as a string without emptying it."""
-        temp_queue = LinkedQ()  # Skapa en temporär kö
+        temp_queue = LinkedQ()
         remaining = []
-
         while not self.queue.isEmpty():
             char = self.queue.dequeue()
             remaining.append(char)
-            temp_queue.enqueue(char)  # Lagra tillfälligt för att återskapa kön
-
-        # Återställ kön efter att vi läst av alla kvarvarande element
+            temp_queue.enqueue(char)
         self.queue = temp_queue
         return ''.join(remaining)
 
-  
     def parse_to_output(self):
-        """Parsar och returnerar en sträng som visar resultatet, utan att skriva ut."""
-        try:
-            self.readformula()
-            if not self.queue.isEmpty():
-                raise Syntaxfel(f"Felaktig gruppstart vid radslutet {self.remaining_formula()}")
-            return "Formeln är syntaktiskt korrekt"
-        except Syntaxfel as e:
-            return str(e)
+        return self.readformula()
+
+
+def testOutput(formula):
+    parser = MoleculeParser(formula)
+    return parser.parse_to_output()
 
 
 def main():
     for line in sys.stdin:
         line = line.strip()
-        if line == '#':
+        if line == '#':  # Terminate if line is '#'
             break
         parser = MoleculeParser(line)
-        parser.readformula()
+        output = parser.parse_to_output()
+        print(output)
 
 
 if __name__ == "__main__":
     main()
-
-def testOutput(formula):
-    """Används för att testa utmatning från MoleculeParser."""
-    parser = MoleculeParser(formula)
-    return parser.parse_to_output()
 
