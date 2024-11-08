@@ -1,5 +1,5 @@
 import unittest
-import main2 as s  # Importerar main2 och förväntar sig att testOutput finns
+import main as s  
 
 
 class Syntaxtest(unittest.TestCase):
