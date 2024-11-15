@@ -1,25 +1,11 @@
+from tkinter import *
+
 class Ruta:
     def __init__(self, atom="( )", num=1):
         self.atom = atom
         self.num = num
         self.next = None
         self.down = None
-
-def version():
-    """Kolla vilken version av Python vi har"""
-    import sys
-    datatyp = type(sys.version_info)
-    if datatyp == type(()):
-        version = sys.version_info[0]
-    else:
-        version = sys.version_info.major
-    return version
-
-if version() == 3:
-    from tkinter import *
-else:
-    from Tkinter import *
-
 
 class Ruta:
     def __init__(self, atom = "()", num = 1):
