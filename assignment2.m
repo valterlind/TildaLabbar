@@ -67,3 +67,25 @@ figure;
 bode(T);
 grid on;
 title('Bode Plot of Closed-Loop System');
+
+%% LEAD-LAG
+% Parametrar för lead-lag-länken
+K = 1; % Förstärkningsfaktor
+Td = 0.1; % Tidskonstant för lead-delen
+B = 10; % Förhållande mellan nollställe och pol för lead-delen
+Ti = 0.5; % Tidskonstant för lag-delen
+gamma = 0.1; % Faktor för lag-delen
+
+% Lead-del: (T_d s + 1) / (B T_d s + 1)
+lead_numerator = [Td, 1]; % T_d s + 1
+lead_denominator = [B * Td, 1]; % B T_d s + 1
+C_lead = tf(lead_numerator, lead_denominator);
+
+% Lag-del: (T_i s + 1) / (T_i s + gamma)
+lag_numerator = [Ti, 1]; % T_i s + 1
+lag_denominator = [Ti, gamma]; % T_i s + gamma
+C_lag = tf(lag_numerator, lag_denominator);
+
+% Kombinera lead och lag med förstärkning K
+C = K * C_lead * C_lag;
+
