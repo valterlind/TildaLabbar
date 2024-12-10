@@ -67,14 +67,13 @@ figure;
 bode(T);
 grid on;
 title('Bode Plot of Closed-Loop System');
-
 %% LEAD-LAG
 % Parametrar för lead-lag-länken
-K = 1; % Förstärkningsfaktor
-Td = 0.1; % Tidskonstant för lead-delen
-B = 10; % Förhållande mellan nollställe och pol för lead-delen
-Ti = 0.5; % Tidskonstant för lag-delen
-gamma = 0.1; % Faktor för lag-delen
+K_2 = 15.4; % Förstärkningsfaktor
+Td = 2.84; % Tidskonstant för lead-delen
+B = 0.16; % Förhållande mellan nollställe och pol för lead-delen
+Ti = 11.36; % Tidskonstant för lag-delen
+gamma = 0.5; % Faktor för lag-delen
 
 % Lead-del: (T_d s + 1) / (B T_d s + 1)
 lead_numerator = [Td, 1]; % T_d s + 1
@@ -86,6 +85,22 @@ lag_numerator = [Ti, 1]; % T_i s + 1
 lag_denominator = [Ti, gamma]; % T_i s + gamma
 C_lag = tf(lag_numerator, lag_denominator);
 
-% Kombinera lead och lag med förstärkning K
-C = K * C_lead * C_lag;
+% Kombinera lead och lag med förstärkning K och G
+C = K_2 * C_lead * C_lag * G;
 
+% Visa överföringsfunktionen
+disp('Lead-lag-kompensatorn C(s):');
+C
+
+% Rita Bodediagram
+figure;
+bode(C);
+grid on;
+title('Bodeplot för Lead-Lag-Kompensator');
+
+lab3robot(G,Kp,C,[],[],[],[],[],PersonalNumber)
+L = feedback(C, 1);
+
+step(L);
+grid on;
+title('Stegsvar för leadlag')
