@@ -16,8 +16,7 @@ G = tf(num, den);
 
 %Anropar funktioner
 [J,umax] = lab3robot(PersonalNumber);
-%lab3robot(G, PersonalNumber);
-
+lab3robot(G, PersonalNumber);
 
 %%
 % Definera P-contoller
@@ -38,8 +37,8 @@ title('Stegsvar för P-regulator')
 
 %lab3robot(G,Kp,[],[],[],[],[],[],PersonalNumber)
 
-%%
-% Assignment 3
+%% Assignment 3
+% Assignment 
 
 % Calculate the cross-over frequency and phase-margin for the open loop system
 
@@ -67,13 +66,15 @@ figure;
 bode(T);
 grid on;
 title('Bode Plot of Closed-Loop System');
+
+
 %% LEAD-LAG
 % Parametrar för lead-lag-länken
-K_2 = 15.4; % Förstärkningsfaktor
+K_v = 15.4; % Förstärkningsfaktor
 Td = 2.84; % Tidskonstant för lead-delen
 B = 0.16; % Förhållande mellan nollställe och pol för lead-delen
-Ti = 11.36; % Tidskonstant för lag-delen
-gamma = 0.5; % Faktor för lag-delen
+Ti = 13.6; % Tidskonstant för lag-delen
+gamma = 0.036; % Faktor för lag-delen
 
 % Lead-del: (T_d s + 1) / (B T_d s + 1)
 lead_numerator = [Td, 1]; % T_d s + 1
@@ -85,22 +86,104 @@ lag_numerator = [Ti, 1]; % T_i s + 1
 lag_denominator = [Ti, gamma]; % T_i s + gamma
 C_lag = tf(lag_numerator, lag_denominator);
 
-% Kombinera lead och lag med förstärkning K och G
-C = K_2 * C_lead * C_lag * G;
+% Kombinera lead och lag med förstärkning K
+F_ll = K_v * C_lead * C_lag;
+
+% T_open
+L_open = F_ll * G;
+
+% T_closed
+L_closed = feedback(L_open, 1);
+
+%% U_max
 
 % Visa överföringsfunktionen
 disp('Lead-lag-kompensatorn C(s):');
-C
 
 % Rita Bodediagram
 figure;
-bode(C);
+bode(F_ll);
 grid on;
 title('Bodeplot för Lead-Lag-Kompensator');
 
-lab3robot(G,Kp,C,[],[],[],[],[],PersonalNumber)
-L = feedback(C, 1);
-
-step(L);
+step(L_closed);
 grid on;
 title('Stegsvar för leadlag')
+
+% U max
+% Tidsvektor
+t = 0:0.01:10;  % Tid från 0 till 10 sekunder med steg på 0.01 sekunder
+
+% Definiera referenssignalen r(t) som ett enhetssteg
+r = ones(length(t), 1);  % Gör r till en kolumnvektor med samma längd somt
+
+% Beräkna utsignalen y(t) för enhetssteget
+[y, t] = step(L_closed, t);  % Säkerställ att y och t är samma längd som r
+
+% Omvandla y till en kolumnvektor om det behövs
+y = y(:);
+
+% Beräkna insignalen u(t) = C * (r(t) - y(t))
+u = lsim(F_ll, r - y, t);
+
+% Beräkna det maximala värdet av u(t)
+u_max = max(u);
+
+% Plot av insignalen u(t)
+figure;
+plot(t, u, 'b', 'LineWidth', 1.5);
+grid on;
+xlabel('Tid [s]');
+ylabel('Insignal u(t)');
+title('Insignal u(t) för enhetssteg i referenssignalen r(t)');
+
+% Visa det maximala värdet av u(t)
+fprintf('Maximalt värde av u(t): %.4f\n', u_max);
+
+%% Tester
+
+% REQUIREMENT 4: Error < 0.05
+s = tf('s');
+ramp = 1 / s;
+ramperror = dcgain(ramp - (L_closed/s));
+disp('Ramp error = ')
+disp(ramperror)
+
+%% Assignment 8
+
+% Funktioner
+S1 = 1 / (1 + FG);
+S2 = 1 / (1 + L_open);
+
+% Plot
+bodemag(S1, S2);
+
+%% Assignment 9
+
+% Funktioner
+dG1 = (s + 10) / 40;
+dG2 = (s + 10) / (4*(s + 0.01));
+T2 = 1 - S2;
+%T2 = feedback(L_open, 1);
+
+bodemag(T2, 1/dG1, 1/dG2);
+
+%% Assignment 10
+
+A = [0, 1/20, 0 ; 0, -0.25, 9.5 ;0 , -0.25, -10.5];
+B = [0; 0; 0.5];
+C = [1,0,0];
+
+k = 2.05;
+desired_poles = [-2.1+2.1i, -2.1-2.1i, -2.1];
+L = place(A, B, desired_poles)
+
+L0 = -inv(C * inv(A-B*L)*B)
+
+%% Assignment 12
+
+
+%% Test
+lab3robot(G,Kp,F_ll,A,B,C,L,L0,PersonalNumber);
+%%
+% Bode diagram
