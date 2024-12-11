@@ -114,10 +114,7 @@ t = 0:0.01:10;  % Tid från 0 till 10 sekunder med steg på 0.01 sekunder
 r = ones(length(t), 1);  % Gör r till en kolumnvektor med samma längd somt
 
 % Beräkna utsignalen y(t) för enhetssteget
-[y, t] = step(L_closed, t);  % Säkerställ att y och t är samma längd som r
-
-% Omvandla y till en kolumnvektor om det behövs
-y = y(:);
+[y, t] = step(L_closed, t);
 
 % Beräkna insignalen u(t) = C * (r(t) - y(t))
 u = lsim(F_ll, r - y, t);
@@ -176,25 +173,26 @@ C = [1,0,0];
 
 %% Assignment 12
 
-desired_poles = [-2.19+2.19i, -2.19-2.19i, -2.19];
+desired_poles = [-2.18+2.18i, -2.18-2.18i, -2.18];
 L = place(A, B, desired_poles);
-
-figure;
-rlocus(G_ss);
-grid on;
 
 %L0 = -inv(C / (A-B*L) * B)
 L0 = L(1);
 
 G_ss = ss(A - B*L, B*L0, C, 0);
 
-u_ss = lsim(G_ss/G, r-y, t);
+figure;
+rlocus(G_ss);
+
+% Beräkna utsignalen y(t) för enhetssteget
+[y_ss, t] = step(G_ss, t);
+
+u_ss = lsim(G_ss/G, r-y_ss, t);
 
 u_ss_max = max(u_ss);
 
 disp('u_ss_max= ')
 disp(u_ss_max)
-
 
 %% Test
 lab3robot(G,Kp,F_ll,A,B,C,L,L0,PersonalNumber);
