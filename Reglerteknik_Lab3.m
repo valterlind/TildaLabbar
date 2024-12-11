@@ -191,8 +191,5 @@ u_ss = lsim(G_ss/G, r-y_ss, t);
 
 u_ss_max = max(u_ss);
 
-disp('u_ss_max= ')
-disp(u_ss_max)
-
 %% Test
 lab3robot(G,Kp,F_ll,A,B,C,L,L0,PersonalNumber);
