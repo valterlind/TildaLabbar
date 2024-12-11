@@ -24,10 +24,10 @@ F = tf(Kp);
 FG = F*G;
 
 % Closed-loop system
-T = feedback(F * G, 1);
+FG_closed = feedback(F * G, 1);
 
 % Simulera stegsvar
-step(T);
+step(FG_closed);
 
 grid on;
 title('Stegsvar för P-regulator')
@@ -44,7 +44,7 @@ disp(['Crossover Frequency (rad/s): ', num2str(wcp)]);
 disp(['Phase Margin (degrees): ', num2str(pm)]);
 
 % Calculate the closed-loop bandwidth
-[mag, phase, w] = bode(T); % Get magnitude and phase
+[mag, phase, w] = bode(FG_closed); % Get magnitude and phase
 mag_db = 20*log10(squeeze(mag)); % Convert magnitude to dB
 bandwidth_idx = find(mag_db <= -3, 1, 'first'); % Find frequency at -3 dB
 bandwidth = w(bandwidth_idx); % Bandwidth frequency
@@ -59,13 +59,13 @@ title('Bode Plot of Open-Loop System');
 
 % Bode diagram closed-loop
 figure;
-bode(T);
+bode(FG_closed);
 grid on;
 title('Bode Plot of Closed-Loop System');
 
 %% LEAD-LAG
 % Parametrar för lead-lag-länken
-K_v = 15.4; % Förstärkningsfaktor
+K_ll = 15.4; % Förstärkningsfaktor
 Td = 2.84; % Tidskonstant för lead-delen
 B = 0.16; % Förhållande mellan nollställe och pol för lead-delen
 Ti = 13.6; % Tidskonstant för lag-delen
@@ -82,7 +82,7 @@ lag_denominator = [Ti, gamma]; % T_i s + gamma
 C_lag = tf(lag_numerator, lag_denominator);
 
 % Kombinera lead och lag med förstärkning K
-F_ll = K_v * C_lead * C_lag;
+F_ll = K_ll * C_lead * C_lag;
 
 % T_open
 L_open = F_ll * G;
@@ -152,7 +152,9 @@ S1 = 1 / (1 + FG);
 S2 = 1 / (1 + L_open);
 
 % Plot
+figure;
 bodemag(S1, S2);
+grid on;
 
 %% Assignment 9
 
@@ -162,7 +164,9 @@ dG2 = (s + 10) / (4*(s + 0.01));
 T2 = 1 - S2;
 %T2 = feedback(L_open, 1);
 
+figure;
 bodemag(T2, 1/dG1, 1/dG2);
+grid on;
 
 %% Assignment 10
 
@@ -172,11 +176,25 @@ C = [1,0,0];
 
 %% Assignment 12
 
-desired_poles = [-2.1+2.1i, -2.1-2.1i, -2.1];
+desired_poles = [-2.19+2.19i, -2.19-2.19i, -2.19];
 L = place(A, B, desired_poles);
+
+figure;
+rlocus(G_ss);
+grid on;
 
 %L0 = -inv(C / (A-B*L) * B)
 L0 = L(1);
+
+G_ss = ss(A - B*L, B*L0, C, 0);
+
+u_ss = lsim(G_ss/G, r-y, t);
+
+u_ss_max = max(u_ss);
+
+disp('u_ss_max= ')
+disp(u_ss_max)
+
 
 %% Test
 lab3robot(G,Kp,F_ll,A,B,C,L,L0,PersonalNumber);
