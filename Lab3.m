@@ -1,13 +1,9 @@
 clear;
 clc;
+%% Assignment 1
 
 % Definera variabler
 PersonalNumber = 020711;
-
-%open_num = 38;
-%open_den = [200, 2100, 0];
-
-%open_loop_tf = tf(open_num, open_den);
 
 num = 1.9;
 den = [8, 86, 40, 0];
@@ -16,9 +12,10 @@ G = tf(num, den);
 
 %Anropar funktioner
 [J,umax] = lab3robot(PersonalNumber);
-lab3robot(G, PersonalNumber);
+%lab3robot(G, PersonalNumber);
 
-%%
+%% Assignment 2
+
 % Definera P-contoller
 Kp = 5.1;
 F = tf(Kp);
@@ -38,7 +35,6 @@ title('Stegsvar för P-regulator')
 %lab3robot(G,Kp,[],[],[],[],[],[],PersonalNumber)
 
 %% Assignment 3
-% Assignment 
 
 % Calculate the cross-over frequency and phase-margin for the open loop system
 
@@ -66,7 +62,6 @@ figure;
 bode(T);
 grid on;
 title('Bode Plot of Closed-Loop System');
-
 
 %% LEAD-LAG
 % Parametrar för lead-lag-länken
@@ -106,6 +101,7 @@ bode(F_ll);
 grid on;
 title('Bodeplot för Lead-Lag-Kompensator');
 
+figure;
 step(L_closed);
 grid on;
 title('Stegsvar för leadlag')
@@ -174,16 +170,13 @@ A = [0, 1/20, 0 ; 0, -0.25, 9.5 ;0 , -0.25, -10.5];
 B = [0; 0; 0.5];
 C = [1,0,0];
 
-k = 2.05;
-desired_poles = [-2.1+2.1i, -2.1-2.1i, -2.1];
-L = place(A, B, desired_poles)
-
-L0 = -inv(C * inv(A-B*L)*B)
-
 %% Assignment 12
 
+desired_poles = [-2.1+2.1i, -2.1-2.1i, -2.1];
+L = place(A, B, desired_poles);
+
+%L0 = -inv(C / (A-B*L) * B)
+L0 = L(1);
 
 %% Test
 lab3robot(G,Kp,F_ll,A,B,C,L,L0,PersonalNumber);
-%%
-% Bode diagram
